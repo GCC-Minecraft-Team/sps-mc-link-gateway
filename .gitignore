@@ -28,3 +28,6 @@ hs_err_pid*
 /TestMC01_main
 /TestMC02_end
 /target
+/TestMC02_end/
+/TestMC01_main/
+

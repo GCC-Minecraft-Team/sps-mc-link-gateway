@@ -1,0 +1,4 @@
+name: SPSMCGateway
+version: ${project.version}
+main: gccminecraftteam.spsmclinkgateway.SPSGateway
+description: A registration system and player routing system for SPSMC

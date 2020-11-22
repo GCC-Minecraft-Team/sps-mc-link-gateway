@@ -10,6 +10,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 import gccminecraftteam.spsmclinkgateway.GatewayConfig;
+import gccminecraftteam.spsmclinkgateway.PlayerJoinEvents;
 import gccminecraftteam.spsmclinkgateway.SPSGateway;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -27,8 +28,6 @@ import java.util.*;
 
 public class DatabaseLink {
 
-    public static final String CONFIG_FILE = "gatewayConfig.yml";
-
     // mongo variables
     private static MongoClient mongoClient;
     private static MongoDatabase mongoDatabase;
@@ -39,26 +38,7 @@ public class DatabaseLink {
      * Creates a connection to the MongoDB database.
      */
     public static void SetupDatabase() {
-        // Loading the YAML file
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        File file = new File("gatewayConfig.yaml");
-
-        // Instantiating a new ObjectMapper as a YAMLFactory
-        ObjectMapper om = new ObjectMapper(new YAMLFactory());
-
-        // set default values
-        GatewayConfig config = new GatewayConfig("mydb_uri", "mydb_db");
-
-        try {
-            // Mapping the gateway config from the YAML file to the GatewayConfig class
-            config = om.readValue(file, GatewayConfig.class);
-        } catch (IOException e) {
-            try {
-                om.writeValue(new File("gatewayConfig.yaml"), config);
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        }
+        GatewayConfig config = SPSGateway.config();
 
         // set up info for database
         ConnectionString connectionString = new ConnectionString((String) config.getDbURI());
@@ -318,9 +298,6 @@ public class DatabaseLink {
         // get player
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
 
-        // load permissions
-        //SPSSpigot.perms().loadPermissions(player);
-
         // set nametag
         int maxLength = Math.min(name.length(), 15);
 
@@ -331,29 +308,18 @@ public class DatabaseLink {
         //NickAPI.refreshPlayer( player );
 
         // send a confirmation message
-        player.sendMessage(ChatColor.BOLD.toString() +
+        player.sendMessage(new TextComponent(ChatColor.BOLD.toString() +
                 ChatColor.GREEN.toString() + "Successfully linked account " +
                 ChatColor.GOLD.toString() + email +
                 ChatColor.GREEN.toString() + " to the server! Your new username is: " +
-                ChatColor.GOLD.toString() + name);
+                ChatColor.GOLD.toString() + name));
 
-        if (isBanned(uuid)) {
-            player.disconnect(new TextComponent("The SPS account you linked has been banned!"));
-        }
-        // leave this stuff for the individual servers
-        /*
-        // give starting boat
-        if (player.getInventory().getItemInMainHand().getType() == Material.AIR) {
-            SPSSpigot.plugin().giveStartingItems(player);
-        }
+        ProxyServer.getInstance().broadcast(new TextComponent(ChatColor.BOLD + "" + ChatColor.GOLD + "Welcome to SPS MC " + name + "!"));
 
-        ClaimBoard.addBoard(player);
+        player.sendMessage(new TextComponent("You've spawned in the lobby, please use the included " + ChatColor.BLUE +"Starting Boat" + ChatColor.WHITE + " to leave the island!"
+                + "\nReturn to spawn at any time using the " + ChatColor.LIGHT_PURPLE +"/spawn" + ChatColor.WHITE + " command."));
 
-        CompassThread compass = new CompassThread(player, SPSSpigot.getWorldGroup(player.getWorld()));
-        SPSSpigot.plugin().compassThreads.put(player.getUniqueId(), compass);
-        compass.start();
-
-        player.sendMessage("You've spawned in the lobby, please use the included " + ChatColor.BLUE +"Starting Boat" + ChatColor.WHITE + " to leave the island!");
-        */
+        // connect to main server
+        PlayerJoinEvents.joinRegistered(player);
     }
 }

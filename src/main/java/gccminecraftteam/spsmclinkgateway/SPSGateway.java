@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import gccminecraftteam.spsmclinkgateway.database.DatabaseLink;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.event.EventHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,6 +65,7 @@ public final class SPSGateway extends Plugin {
         DatabaseLink.SetupDatabase();
 
         // Event listeners
+        ProxyServer.getInstance().getPluginManager().registerListener(this, new PlayerChatEvents());
         ProxyServer.getInstance().getPluginManager().registerListener(this, new PlayerJoinEvents());
 
         getLogger().info("[SPSMC Gateway] System Initialized");

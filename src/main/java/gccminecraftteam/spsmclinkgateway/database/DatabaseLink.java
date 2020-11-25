@@ -15,6 +15,7 @@ import gccminecraftteam.spsmclinkgateway.SPSGateway;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -321,5 +322,11 @@ public class DatabaseLink {
 
         // connect to main server
         PlayerJoinEvents.joinRegistered(player);
+
+        // send the player to the main world
+        if (player.getServer() == null || !player.getServer().getInfo().getName().equalsIgnoreCase("main")) {
+            ServerInfo target = ProxyServer.getInstance().getServerInfo(SPSGateway.config().getMainServer());
+            player.connect(target);
+        }
     }
 }

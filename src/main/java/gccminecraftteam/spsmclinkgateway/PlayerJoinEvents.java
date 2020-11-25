@@ -9,48 +9,36 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class PlayerJoinEvents implements Listener {
 
     /**
-     * Fired when the player logs into the proxy
-     * @param event
+     * Handles players logging in who aren't registered
+     * @param player
      */
-    @EventHandler
-    public void postPlayerLogin(PostLoginEvent event) {
-        ProxiedPlayer player = event.getPlayer();
+    public static void joinUnregistered(ProxiedPlayer player) {
 
-        if (!DatabaseLink.isRegistered(player.getUniqueId())) {
+        // send a message to other players on the server
+        ProxyServer.getInstance().broadcast(new TextComponent(ChatColor.GOLD + "A new player is joining the server!"));
 
-            // send the player to limbo
-            if (player.getServer() == null || !player.getServer().getInfo().getName().equalsIgnoreCase(SPSGateway.config().getLimboServer())) {
-                ServerInfo target = ProxyServer.getInstance().getServerInfo(SPSGateway.config().getLimboServer());
-                player.connect(target);
-            }
+        // Create a token for the player
+        String jwt = WebInterfaceLink.CreateJWT(player.getUniqueId().toString(), "SPS MC", "Register Token", 1000000);
 
-            // send a message to other players on the server
-            ProxyServer.getInstance().broadcast(new TextComponent(ChatColor.GOLD + "A new player is joining the server!"));
+        TextComponent message = new TextComponent(ChatColor.BOLD + "" + ChatColor.AQUA + ">> CLICK HERE <<");
+        message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, SPSGateway.config().getWebAppURL() + "/register?token=" + jwt));
 
-            // Create a token for the player
-            String jwt = WebInterfaceLink.CreateJWT(player.getUniqueId().toString(), "SPS MC", "Register Token", 1000000);
+        player.sendMessage(new TextComponent(ChatColor.BOLD.toString() + ChatColor.GOLD.toString() + "Connect to your SPS profile to play!"));
+        player.sendMessage(message);
 
-            TextComponent message = new TextComponent(ChatColor.BOLD + "" + ChatColor.AQUA + ">> CLICK HERE <<");
-            message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, SPSGateway.config().getWebAppURL() + "/register?token=" + jwt));
-
-            player.sendMessage(new TextComponent(ChatColor.BOLD.toString() + ChatColor.GOLD.toString() + "Connect to your SPS profile to play!"));
-            player.sendMessage(message);
-
-            // send a welcome message to the player and ask them to register.
-            TextComponent title = new TextComponent("Welcome to " + ChatColor.AQUA +" SPS MC" + ChatColor.WHITE + "!");
-            TextComponent subtitle = new TextComponent(ChatColor.BOLD + "Please click the link in chat to register!");
-            Title registerTitle = ProxyServer.getInstance().createTitle();
-            registerTitle.title(title).subTitle(subtitle).fadeIn(20).fadeOut(20).stay(800);
-            player.sendTitle(registerTitle);
-        } else {
-            joinRegistered(player);
-        }
+        // send a welcome message to the player and ask them to register.
+        TextComponent title = new TextComponent("Welcome to " + ChatColor.AQUA +" SPS MC" + ChatColor.WHITE + "!");
+        TextComponent subtitle = new TextComponent(ChatColor.BOLD + "Please click the link in chat to register!");
+        Title registerTitle = ProxyServer.getInstance().createTitle();
+        registerTitle.title(title).subTitle(subtitle).fadeIn(20).fadeOut(20).stay(800);
+        player.sendTitle(registerTitle);
     }
 
     /**
@@ -64,11 +52,22 @@ public class PlayerJoinEvents implements Listener {
 
         String spsName = DatabaseLink.getSPSName(player.getUniqueId());
         player.sendMessage(new TextComponent(ChatColor.AQUA + "Welcome to SPSMC, " + spsName + "! Type" + ChatColor.WHITE + " /help " + ChatColor.AQUA + " for a list of commands."));
+    }
 
-        // send the player to the main world
-        if (player.getServer() == null || !player.getServer().getInfo().getName().equalsIgnoreCase("main")) {
-            ServerInfo target = ProxyServer.getInstance().getServerInfo(SPSGateway.config().getMainServer());
-            player.connect(target);
+    @EventHandler
+    public void onServerJoin(ServerConnectEvent event) {
+        ProxiedPlayer player = event.getPlayer();
+
+        if (DatabaseLink.isRegistered(player.getUniqueId())) {
+            joinRegistered(player);
+            if (event.getTarget().getName().equals("limbo")) {
+                event.setTarget(ProxyServer.getInstance().getServerInfo(SPSGateway.config().getMainServer()));
+            } else if (player.getServer() != null && player.getServer().getInfo().getName().equals("limbo")) {
+                event.setTarget(ProxyServer.getInstance().getServerInfo(SPSGateway.config().getMainServer()));
+            }
+        } else {
+            joinUnregistered(player);
+            event.setTarget(ProxyServer.getInstance().getServerInfo(SPSGateway.config().getLimboServer()));
         }
     }
 

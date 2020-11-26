@@ -8,8 +8,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
@@ -52,6 +51,16 @@ public class PlayerJoinEvents implements Listener {
 
         String spsName = DatabaseLink.getSPSName(player.getUniqueId());
         player.sendMessage(new TextComponent(ChatColor.AQUA + "Welcome to SPSMC, " + spsName + "! Type" + ChatColor.WHITE + " /help " + ChatColor.AQUA + " for a list of commands."));
+    }
+
+    @EventHandler
+    public void onServerSwitch(ServerSwitchEvent event) {
+        SPSGateway.plugin().getProxy().broadcast(new TextComponent(ChatColor.DARK_GREEN.toString() + ChatColor.ITALIC.toString() + DatabaseLink.getSPSName(event.getPlayer().getUniqueId()) + " is switching to a new world-server!"));
+    }
+
+    @EventHandler
+    public void onServerDisconnect(PlayerDisconnectEvent event) {
+        SPSGateway.plugin().getProxy().broadcast(new TextComponent(ChatColor.BLUE.toString() + ChatColor.ITALIC.toString() + DatabaseLink.getSPSName(event.getPlayer().getUniqueId()) + " disconnected, bye!"));
     }
 
     @EventHandler

@@ -69,6 +69,9 @@ public final class SPSGateway extends Plugin {
         ProxyServer.getInstance().getPluginManager().registerListener(this, new PlayerChatEvents());
         ProxyServer.getInstance().getPluginManager().registerListener(this, new PlayerJoinEvents());
 
+        // Commands
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new Link());
+
         getLogger().info("[SPSMC Gateway] System Initialized");
     }
 

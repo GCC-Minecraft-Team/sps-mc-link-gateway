@@ -1,17 +1,27 @@
 package gccminecraftteam.spsmclinkgateway;
 
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class LinkCommand {
+public class Link extends Command {
     static final MediaType mediaType = MediaType.get("application/text; charset=utf-8");
     static OkHttpClient client = new OkHttpClient();
 
-    public static void HandleLinkCommand(String[] args, ProxiedPlayer sender){
+    public Link() {
+        super("link");
+    }
+
+    public void execute(CommandSender s, String[] args){
+        if(!(s instanceof ProxiedPlayer)) return;
+
+        ProxiedPlayer sender = (ProxiedPlayer) s;
+
         if(args.length < 1){
             sender.sendMessage(new TextComponent("You can get a token by running the !link command in Discord. Usage: /link <token>"));
             return;

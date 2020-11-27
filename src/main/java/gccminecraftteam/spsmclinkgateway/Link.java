@@ -33,7 +33,7 @@ public class Link extends Command {
 
         RequestBody body = RequestBody.create(args[0]+sender.getUniqueId().toString(), mediaType);
 
-        Request request = new Request.Builder().url("http://localhost:"+SPSGateway.config().getBotPort()+"/link").post(body).build();
+        Request request = new Request.Builder().url("http://"+SPSGateway.config().getBotHost()+":"+SPSGateway.config().getBotPort()+"/link").post(body).build();
         client.newCall(request).enqueue(new Callback() {
 
             @Override

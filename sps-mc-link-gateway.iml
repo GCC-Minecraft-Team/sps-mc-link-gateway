@@ -21,6 +21,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: com.squareup.okhttp3:okhttp:4.9.0" level="project" />
+    <orderEntry type="library" name="Maven: com.squareup.okio:okio:2.8.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.4.10" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.github.waterfallmc:waterfall-api:1.16-R0.4-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.github.waterfallmc:waterfall-chat:1.16-R0.4-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.gson:gson:2.8.0" level="project" />

@@ -6,6 +6,8 @@ import gccminecraftteam.spsmclinkgateway.database.DatabaseLink;
 import io.javalin.Javalin;
 import io.jsonwebtoken.*;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -72,6 +74,16 @@ public class WebInterfaceLink {
                 // internal server error
                 ctx.status(500);
             }
+        });
+
+        // I really should be using websockets but it'll be a bit more complicated setting up the whole ping system and managing clients
+        app.post("/broadcast", ctx -> {
+            String message = ctx.body();
+            for (ProxiedPlayer player : SPSGateway.plugin().getProxy().getPlayers()) {
+                player.sendMessage(new TextComponent(message));
+            }
+
+            ctx.status(200);
         });
     }
 

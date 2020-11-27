@@ -7,12 +7,15 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
+import okhttp3.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public final class SPSGateway extends Plugin {
 
@@ -21,6 +24,9 @@ public final class SPSGateway extends Plugin {
     private static GatewayConfig config;
 
     public static final String CONFIG_FILE = "gatewayConfig.yml";
+
+    public static OkHttpClient client = new OkHttpClient();
+    public static final MediaType textMedia = MediaType.get("application/text; charset=utf-8");
 
     public SPSGateway() {
         mutedPlayers = new HashSet<>();
@@ -73,6 +79,28 @@ public final class SPSGateway extends Plugin {
 
         // Commands
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new Link());
+
+        // Update bot's player count
+        ProxyServer.getInstance().getScheduler().schedule(this, new Runnable() {
+            @Override
+            public void run() {
+                RequestBody body = RequestBody.create(Integer.toString(ProxyServer.getInstance().getPlayers().size()), SPSGateway.textMedia);
+
+                Request request = new Request.Builder().url("http://localhost:"+SPSGateway.config().getBotPort()+"/postcount").post(body).build();
+                SPSGateway.client.newCall(request).enqueue(new Callback() {
+
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        }, 0l, 10l, TimeUnit.MINUTES);
 
         getLogger().info("[SPSMC Gateway] System Initialized");
     }

@@ -10,9 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public class Link extends Command {
-    static final MediaType mediaType = MediaType.get("application/text; charset=utf-8");
-    static OkHttpClient client = new OkHttpClient();
-
     public Link() {
         super("link");
     }
@@ -31,10 +28,10 @@ public class Link extends Command {
             sender.sendMessage(new TextComponent("All tokens should be exactly 32 characters long. Try copying the token again."));
         }
 
-        RequestBody body = RequestBody.create(args[0]+sender.getUniqueId().toString(), mediaType);
+        RequestBody body = RequestBody.create(args[0]+sender.getUniqueId().toString(), SPSGateway.textMedia);
 
         Request request = new Request.Builder().url("http://"+SPSGateway.config().getBotHost()+":"+SPSGateway.config().getBotPort()+"/link").post(body).build();
-        client.newCall(request).enqueue(new Callback() {
+        SPSGateway.client.newCall(request).enqueue(new Callback() {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {

@@ -86,7 +86,7 @@ public final class SPSGateway extends Plugin {
             public void run() {
                 RequestBody body = RequestBody.create(Integer.toString(ProxyServer.getInstance().getPlayers().size()), SPSGateway.textMedia);
 
-                Request request = new Request.Builder().url("http://localhost:"+SPSGateway.config().getBotPort()+"/postcount").post(body).build();
+                Request request = new Request.Builder().url("http://"+SPSGateway.config().getBotHost()+":"+SPSGateway.config().getBotPort()+"/postcount").post(body).build();
                 SPSGateway.client.newCall(request).enqueue(new Callback() {
 
                     @Override

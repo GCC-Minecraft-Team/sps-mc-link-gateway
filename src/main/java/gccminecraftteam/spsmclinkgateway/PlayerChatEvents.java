@@ -11,6 +11,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PlayerChatEvents implements Listener {
@@ -29,6 +30,24 @@ public class PlayerChatEvents implements Listener {
                 //String msg = e.getMessage();
 
                 //player.sendMessage(new TextComponent(msg));
+            }
+        }
+
+        if(e.getMessage().startsWith("/")){
+            String[] parts = e.getMessage().split(" ");
+
+            String command = parts[0].substring(1).toLowerCase();
+            String[] args = Arrays.copyOfRange(parts, 1, parts.length-1);
+
+            try {
+                switch (command) {
+                    case "link":
+                        LinkCommand.HandleLinkCommand(args, sender);
+                }
+            }
+            catch(Exception ex){
+                System.out.println("Error running command "+command+". Message: \""+e.getMessage()+"\".");
+                ex.printStackTrace();
             }
         }
 

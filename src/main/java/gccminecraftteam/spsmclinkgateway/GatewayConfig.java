@@ -12,7 +12,9 @@ public class GatewayConfig {
     String limboServer;
     String endServer;
 
-    public GatewayConfig(String dbURI, String dbDB, String jwtsecret, String webAppURL, String mainServer, String limboServer, String endServer) {
+    String botPort;
+
+    public GatewayConfig(String dbURI, String dbDB, String jwtsecret, String webAppURL, String mainServer, String limboServer, String endServer, String botPort) {
         this.dbURI = dbURI;
         this.dbDB = dbDB;
         this.jwtsecret = jwtsecret;
@@ -20,6 +22,7 @@ public class GatewayConfig {
         this.mainServer = mainServer;
         this.limboServer = limboServer;
         this.endServer = endServer;
+        this.botPort = botPort;
     }
 
     // Jackson needs this empty constructor (do not remove)
@@ -49,6 +52,8 @@ public class GatewayConfig {
         return endServer;
     }
 
+    public String getBotPort() { return botPort; }
+
     @Override
     public String toString() {
         return "dbURI: " + dbURI +
@@ -57,7 +62,8 @@ public class GatewayConfig {
                 "\nwebAppURL: " + webAppURL +
                 "\nmainServer: " + mainServer +
                 "\nlimboServer: " + limboServer +
-                "\nendServer: " + endServer
+                "\nendServer: " + endServer +
+                "\nbotPort: " + botPort
                 ;
     }
 }

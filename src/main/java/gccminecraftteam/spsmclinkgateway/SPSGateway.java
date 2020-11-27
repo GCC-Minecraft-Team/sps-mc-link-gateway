@@ -44,7 +44,8 @@ public final class SPSGateway extends Plugin {
                 "", "",
                 "main",
                 "limbo",
-                "end");
+                "end",
+                "2788");
 
         try {
             // Mapping the gateway config from the YAML file to the GatewayConfig class

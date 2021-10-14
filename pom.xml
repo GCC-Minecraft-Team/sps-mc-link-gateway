@@ -19,11 +19,9 @@
 
     <distributionManagement>
         <repository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>sps-mc-link-gateway</id>
-            <name>sps-mc-link-gateway</name>
-            <url>https://github.com/GCC-Minecraft-Team/sps-mc-link-gateway.git</url>
-            <layout>default</layout>
+            <id>github</id>
+            <name>GitHub GCC-Minecraft-Team Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/GCC-Minecraft-Team/sps-mc-link-gateway</url>
         </repository>
     </distributionManagement>
 
